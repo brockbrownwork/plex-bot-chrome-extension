@@ -3,10 +3,10 @@
   "version": "0.1.0",
   "description": "Save a little time on scanning.",
   "permissions": ["storage", "tabs"],
-  "host_permissions": ["*://*.flex.com/*"],
+  "host_permissions": ["*://*.plex.com/*"],
   "content_scripts": [
     {
-      "matches": ["*://*.flex.com/*"],
+      "matches": ["*://*.plex.com/*"],
       "js": ["contentScript.js"]
     }
   ],
@@ -14,9 +14,10 @@
     {
       "resources": [
         "assets/signet_logo.png",
-        "assets/ext-icon.png"
+        "assets/ext-icon.png",
+        "scanner.js"
       ],
-      "matches": ["*://*.flex.com/*"]
+      "matches": ["*://*.plex.com/*"]
     }
   ],
   "action": {
