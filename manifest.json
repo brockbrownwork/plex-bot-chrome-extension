@@ -1,27 +1,22 @@
 {
-  "name": "Neopets Classic Dropdown Randomizer",
+  "name": "SMA Scanner",
   "version": "0.1.0",
-  "description": "Save a little time with the dropdown :)",
+  "description": "Save a little time on scanning.",
   "permissions": ["storage", "tabs"],
-  "host_permissions": ["*://*.neopetsclassic.com/*"],
-  "background": {
-    "service_worker": "background.js"
-  },
+  "host_permissions": ["*://*.flex.com/*"],
   "content_scripts": [
     {
-      "matches": ["*://*.neopetsclassic.com/*"],
+      "matches": ["*://*.flex.com/*"],
       "js": ["contentScript.js"]
     }
   ],
   "web_accessible_resources": [
     {
       "resources": [
-        "assets/bookmark.png",
-        "assets/play.png",
-        "assets/delete.png",
-        "assets/save.png"
+        "assets/signet_logo.png",
+        "assets/ext-icon.png"
       ],
-      "matches": ["*://*.neopetsclassic.com/*"]
+      "matches": ["*://*.flex.com/*"]
     }
   ],
   "action": {
@@ -30,7 +25,7 @@
       "24": "assets/ext-icon.png",
       "32": "assets/ext-icon.png"
     },
-    "default_title": "Neopets Classic Dropdown Randomizer",
+    "default_title": "SMA Scanner",
     "default_popup": "popup.html"
   },
   "manifest_version": 3

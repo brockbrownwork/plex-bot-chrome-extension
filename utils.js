@@ -25,6 +25,7 @@ function setScannerValue(some_string) {
                 scanner.dispatchEvent(new Event('change', {bubbles: true})); // usually not needed
                 clickFirstOkButton();
                 console.log("click!")
+                document.getElementsByClassName("control-panel-dashboard-actionbar-button")[1].click();
             }
         }, 100);  // Check every 100 milliseconds
     } else {
@@ -53,7 +54,7 @@ const foo = () => {
             if (mutation.type === 'childList') {
                 var scanner = document.getElementById("serialNoScanner");
                 if (scanner) {
-                    setScannerValue("S004249");
+                    setScannerValue("S006941");
                     observer.disconnect();  // Stop observing once the element is found
                 }
             }

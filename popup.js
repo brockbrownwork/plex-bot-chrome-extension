@@ -1,25 +1,13 @@
-// Function to select a random option from a dropdown menu, excluding the first option
-function selectRandomOption(selectElement) {
-  // Get the total number of options
-  let numOptions = selectElement.options.length;
+var foo;
 
-  // If there are two or more options, proceed to select a random one excluding the first option
-  if (numOptions >= 2) {
-    // Generate a random index from 1 to numOptions - 1 (inclusive)
-    let randomIndex = Math.floor(Math.random() * (numOptions - 1)) + 1;
-    // Select the random option
-    selectElement.selectedIndex = randomIndex;
+chrome.storage.local.get("count", (result) => {
+  if (result.count === undefined) {
+    chrome.storage.local.set({"count": 0});
+    document.getElementById("count").innerHTML = `count: ${0}`;
   }
-}
-
-// Get all the dropdown menus on the page
-let selects = document.querySelectorAll('select');
-
-// Iterate through each dropdown menu and select a random option
-selects.forEach(select => {
-  // If the name of the dropdown is not 'lang', proceed to select a random option
-  if (select.name !== 'lang') {
-    selectRandomOption(select);
+  else {
+    console.log(result.count);
+    document.getElementById("count").innerHTML = `<u>page views</u>: ${result.count + 1}`;
+    chrome.storage.local.set({"count":result.count + 1});
   }
 });
-
