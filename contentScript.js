@@ -8,37 +8,49 @@ const isAlphanumeric = (key) => {
 const listenForScans = () => {
   let buffer = [];
   let lastKeystrokeTime = 0;
-  const rapidThreshold = 50; // milliseconds
+  const rapidThreshold = 30; // milliseconds
   const printThreshold = 100; // milliseconds
   let timeout;
   console.log("listening for scans...");
+
   document.addEventListener('keydown', function(e) {
-  if (e.repeat || (!isAlphanumeric(e.key))) {
-    // ignore if the key is just held down, or if it's
-    // not a letter or a number
-    if (e.key != "Enter") {
-      return;
-    }
-  }
-  let currentTime = new Date().getTime();
-  
-  if (currentTime - lastKeystrokeTime < rapidThreshold) {
-      buffer.push(e.key);
-  } else {
-      buffer = [e.key];
-  }
-
-  clearTimeout(timeout);
-  timeout = setTimeout(function() {
-      if (buffer.length > 4) { // Change this if you want to print single key strokes as well
-          console.log(`Scan detected: ${buffer.join('')}`);
+      if (e.repeat) {
+          return; // ignore if the key is just held down
       }
-      buffer = [];
-  }, printThreshold);
 
-  lastKeystrokeTime = currentTime;
-});
+      let currentTime = new Date().getTime();
+
+      if (e.key === "Enter") {
+          if (buffer.length > 0) {
+              console.log(`Scan detected: ${buffer.join('')}`);
+              buffer = [];
+              clearTimeout(timeout);
+              return;
+          }
+      }
+
+      if (!isAlphanumeric(e.key)) {
+          return; // ignore if it's not a letter or a number
+      }
+
+      if (currentTime - lastKeystrokeTime < rapidThreshold) {
+          buffer.push(e.key);
+      } else {
+          buffer = [e.key];
+      }
+
+      clearTimeout(timeout);
+      timeout = setTimeout(function() {
+          if (buffer.length > 4) {
+              console.log(`Scan detected: ${buffer.slice(0, -1).join('')}`);
+          }
+          buffer = [];
+      }, printThreshold);
+
+      lastKeystrokeTime = currentTime;
+  });
 };
+
 
 
 (() => {
