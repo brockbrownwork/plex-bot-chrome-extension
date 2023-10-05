@@ -21,8 +21,12 @@ const listenForScans = () => {
       let currentTime = new Date().getTime();
 
       if (e.key === "Enter") {
-          if (buffer.length > 3) {
-              console.log(`Scan detected: ${buffer.join('')}`);
+          if (buffer.length > 0) {
+              scanCode = buffer.join('');
+              console.log(`Scan detected: ${scanCode}`);
+              localStorage.setItem("lastScanTime", Date.now());
+              localStorage.setItem("lastScanCode", scanCode);
+              sendScan(scanCode);
               buffer = [];
               clearTimeout(timeout);
               return;
@@ -71,7 +75,7 @@ function blurWorkcenterEntry() {
 }
 
 
-// Control Panel main page stuff
+//Control panel main page stuff from utils.js
 // Function to click the button
 function clickSetup() {
     var buttons = document.getElementsByClassName("control-panel-dashboard-actionbar-button");
@@ -85,7 +89,6 @@ function clickSetup() {
 let clickedFirstOk = false;
 // Function to set the value of the serialNoScanner element
 function setScannerValue(some_string) {
-    clickSetup();
     clickedFirstOk = false;
     var scanner = document.getElementById("serialNoScanner");
     if (scanner) {
@@ -121,17 +124,50 @@ function clickFirstOkButton() {
 
     console.log('No "Ok" button found.');
 }
-// End of control panel main stuff
+
+const sendScan = (someString) => {
+// Set up a MutationObserver to wait for the serialNoScanner element to appear
+    var observer = new MutationObserver(function(mutationsList, observer) {
+        for (var mutation of mutationsList) {
+            if (mutation.type === 'childList') {
+                var scanner = document.getElementById("serialNoScanner");
+                if (scanner) {
+                    setScannerValue(someString);
+                    observer.disconnect();  // Stop observing once the element is found
+                }
+            }
+        }
+    });
+
+    // Configuration for the observer
+    var config = { childList: true, subtree: true };
+
+    // Start observing the document
+    observer.observe(document, config);
+
+    // Click the button
+    clickSetup();
+}
 
 // Main function
 (() => {
 
 let currentURL = window.location.href;
 console.log(`current url: ${currentURL}`);
-if (currentURL.includes("plex.com")) {
+if (currentURL.includes("plex.com/ControlPanel/Dashboard")) {
   console.log("plex detected! foo I say, foo!");
   listenForScans();
   blurWorkcenterEntry();
+} else if (currentURL.includes("/ControlPanel/Production")) {
+    let lastScanTime = localStorage.getItem("lastScanTime");
+    let lastScanCode = localStorage.getItem("lastScanCode");
+    if (lastScanTime && lastScanCode) {
+        console.log("Last scan time:", lastScanTime);
+        console.log("Last scan code:", lastScanCode);
+        let secondsSinceLastScan = (Date.now() - lastScanTime) / 1000;
+        console.log("Seconds since last scan:", secondsSinceLastScan);
+    }
+    
 }
 
 })();
