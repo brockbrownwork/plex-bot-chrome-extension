@@ -166,6 +166,24 @@ if (currentURL.includes("plex.com/ControlPanel/Dashboard")) {
         console.log("Last scan code:", lastScanCode);
         let secondsSinceLastScan = (Date.now() - lastScanTime) / 1000;
         console.log("Seconds since last scan:", secondsSinceLastScan);
+        let box = document.getElementById("binForBinProductionSerialNo");
+        box.focus();
+        document.execCommand('insertText', false, lastScanCode);
+        box.dispatchEvent(new Event('change', {bubbles: true})); // usually not needed
+        // click record bin for bin
+        document.getElementsByClassName("record-production-action-title")[0].click()
+        var checkInterval = setInterval(function() {
+            var sourceElement = document.getElementById("SourceLoaded");
+            
+            if (sourceElement && sourceElement.innerText === "0") {
+                clearInterval(checkInterval); // Stop the interval once the condition is met
+                
+                var backButton = document.getElementsByClassName("back-actionbar-button")[0];
+                if (backButton) {
+                    backButton.click();
+                }
+            }
+        }, 100); // Check every 0.1 seconds
     }
     
 }
