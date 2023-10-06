@@ -5,6 +5,42 @@ const isAlphanumeric = (key) => {
   return /^[a-zA-Z0-9]$/.test(key) && key.length == 1;
 }
 
+function iterateScanCount() {
+    // Check if "scanCount" exists in localStorage
+    if (localStorage.getItem("scanCount") === null) {
+        // If it doesn't exist, set it to zero
+        localStorage.setItem("scanCount", 1);
+    } else {
+        // If it does exist, get its current value, increment it by 1, and store it back
+        let currentCount = localStorage.getItem("scanCount");
+        localStorage.setItem("scanCount", (currentCount + 1).toString());
+    }
+
+    // Just for verification, you can log the updated count to the console
+    console.log("Updated scanCount:", localStorage.getItem("scanCount"));
+}
+
+function listenForTest() {
+    document.addEventListener('keydown', function(e) {
+        // Check if Ctrl, Alt, and '1' are pressed together
+        if (e.ctrlKey && e.altKey && e.key === '1') {
+            test();
+        }
+    });
+}
+
+function test() {
+    // Prompt the user for input and store in someTestScan
+    var someTestScan = window.prompt("Please enter some text:");
+
+    // If the user clicked "Cancel" or entered nothing, we won't proceed
+    if (someTestScan !== null && someTestScan.trim() !== "") {
+        localStorage.setItem("lastScanTime", Date.now());
+        localStorage.setItem("lastScanCode", someTestScan);
+        sendScan(someTestScan);
+    }
+}
+
 const listenForScans = () => {
   let buffer = [];
   let lastKeystrokeTime = 0;
@@ -23,6 +59,7 @@ const listenForScans = () => {
       if (e.key === "Enter") {
           if (buffer.length > 0) {
               scanCode = buffer.join('');
+              iterateScanCount();
               console.log(`Scan detected: ${scanCode}`);
               localStorage.setItem("lastScanTime", Date.now());
               localStorage.setItem("lastScanCode", scanCode);
@@ -157,6 +194,7 @@ console.log(`current url: ${currentURL}`);
 if (currentURL.includes("plex.com/ControlPanel/Dashboard")) {
   console.log("plex detected! foo I say, foo!");
   listenForScans();
+  listenForTest();
   blurWorkcenterEntry();
 } else if (currentURL.includes("/ControlPanel/Production")) {
     let lastScanTime = localStorage.getItem("lastScanTime");
