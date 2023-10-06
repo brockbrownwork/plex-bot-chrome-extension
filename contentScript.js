@@ -96,17 +96,13 @@ function blurWorkcenterEntry() {
     var intervalId = setInterval(function() {
         // Get the first element with the name "scannerWorkcenter"
         var workcenterEntry = document.getElementsByName('scannerWorkcenter')[0];
-        
+        var inputJob = document.getElementsByName("scanner");
         // Check if the element exists
         if (workcenterEntry) {
-            workcenterEntry.addEventListener('focus', function onFocused() {
-                console.log('focused!');
-                this.blur();
-                this.removeEventListener('focus', onFocused);
-            });
-
-            // Clear the interval once the element is found and the listener is attached
-            clearInterval(intervalId);
+            workcenterEntry.disabled = true;
+        }
+        if (inputJob) {
+            inputJob.disabled = true;
         }
     }, 100);
 }
@@ -158,7 +154,7 @@ function setScannerValue(some_string) {
                 clickedFirstOk = true;
                 clearInterval(checkInterval);  // Clear the interval once the condition is met
                 scanner.focus();
-                document.execCommand('insertText', false, some_string);
+                document.execCommand('insertText', false, some_string); // do not change this line; it's needed to handle React
                 scanner.dispatchEvent(new Event('change', {bubbles: true})); // usually not needed
                 clickFirstOkButton();
                 console.log("click!")
@@ -230,7 +226,7 @@ if (currentURL.includes("plex.com/ControlPanel/Dashboard")) {
         console.log("Seconds since last scan:", secondsSinceLastScan);
         let box = document.getElementById("binForBinProductionSerialNo");
         box.focus();
-        document.execCommand('insertText', false, lastScanCode);
+        document.execCommand('insertText', false, lastScanCode); // do not change this line; it's needed to handle React
         box.dispatchEvent(new Event('change', {bubbles: true})); // usually not needed
         // click record bin for bin
         document.getElementsByClassName("record-production-action-title")[0].click()
