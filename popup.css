@@ -6,3 +6,11 @@
 #logo {
   padding: 10px 15px 10px 15px;  /* top, right, bottom, left */
 }
+
+body {
+  background-color: #e6e6e6; /* This is a grey color code */
+}
+
+.centered-div {
+  width: "50%"
+}
