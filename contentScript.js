@@ -129,7 +129,11 @@ let waitForSetupWidgetChange = (someFunction = () => {console.log("yeah!")}) => 
             // Check if the mutation is of type 'characterData' and its target is a text node
             if (mutation.type === 'characterData' && mutation.target.nodeType === Node.TEXT_NODE) {
                 console.log('setupWidget text changed!');
-                someFunction();
+                if (document.getElementById('setupWidget').innerText.includes("240 - QC")) { // Needs testing!
+                    console.log("hey! don't double scan!");
+                } else {
+                    someFunction();
+                }
             }
         }
     });
