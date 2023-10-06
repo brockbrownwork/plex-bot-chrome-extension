@@ -125,6 +125,28 @@ function clickSetup() {
 
 let clickedFirstOk = false;
 // Function to set the value of the serialNoScanner element
+
+let waitForSetupWidgetChange = (someFunction = () => {console.log("yeah!")}) => {
+    // Wait for the setup widget to change, then click the button
+    const setupWidgetObserver = new MutationObserver(mutations => {
+        for(let mutation of mutations) {
+            // Check if the mutation is of type 'characterData' and its target is a text node
+            if (mutation.type === 'characterData' && mutation.target.nodeType === Node.TEXT_NODE) {
+                console.log('setupWidget text changed!');
+                someFunction();
+            }
+        }
+    });
+
+    // Start observing the element with the ID `setupWidget` for changes
+    const setupWidgetElement = document.getElementById('setupWidget');
+    setupWidgetObserver.observe(setupWidgetElement, {
+        characterData: true, // Watch for changes in text data
+        subtree: true,      // Make sure we're watching all inner nodes including text nodes
+    });
+}
+
+
 function setScannerValue(some_string) {
     clickedFirstOk = false;
     var scanner = document.getElementById("serialNoScanner");
@@ -140,7 +162,9 @@ function setScannerValue(some_string) {
                 scanner.dispatchEvent(new Event('change', {bubbles: true})); // usually not needed
                 clickFirstOkButton();
                 console.log("click!")
-                document.getElementsByClassName("control-panel-dashboard-actionbar-button")[1].click();
+                // Click Record Production (on control panel) over and over again until the next page
+                // pulls up (TODO: make this more graceful, maybe time it out)
+                waitForSetupWidgetChange(() => {document.getElementsByClassName("control-panel-dashboard-actionbar-button")[1].click()});
             }
         }, 100);  // Check every 100 milliseconds
     } else {
