@@ -223,7 +223,8 @@ if (currentURL.includes("plex.com/ControlPanel/Dashboard")) {
 } else if (currentURL.includes("/ControlPanel/Production")) {
     let lastScanTime = localStorage.getItem("lastScanTime");
     let lastScanCode = localStorage.getItem("lastScanCode");
-    if (lastScanTime && lastScanCode) {
+    // If it's been more less than 60 seconds since the last scan
+    if ( lastScanTime && ((Date().now () - lastScanTime) / 1000) < 60 && lastScanCode ) {
         console.log("Last scan time:", lastScanTime);
         console.log("Last scan code:", lastScanCode);
         let secondsSinceLastScan = (Date.now() - lastScanTime) / 1000;
@@ -248,6 +249,34 @@ if (currentURL.includes("plex.com/ControlPanel/Dashboard")) {
         }, 100); // Check every 0.1 seconds
     }
     
+} else if (currentURL.includes("/Inventory/Container")) {
+    // This is for grabbing skus from the inventory for testing, copies to the clipboard
+    document.addEventListener('keydown', function(e) {
+        // Check if Ctrl, Alt, and '1' are pressed together
+        if (e.ctrlKey && e.altKey && e.key === '1') {
+            // Find all anchor elements containing 'SerialNo=' in the href attribute
+            const anchorElements = document.querySelectorAll('a[href*="SerialNo="]');
+
+            // Extract serial numbers and put them in a list
+            const serialNumbers = [];
+
+            anchorElements.forEach(anchor => {
+                const href = anchor.getAttribute('href');
+                const match = href.match(/SerialNo=([^&]+)/);
+                if (match && match[1]) {
+                    serialNumbers.push(match[1]);
+                }
+            });
+            navigator.clipboard.writeText(serialNumbers.join('\n'))
+            .then(() => {
+                alert('Text copied to clipboard successfully!');
+            })
+            .catch(err => {
+                console.error('Failed to copy text: ', err);
+            });
+            console.log(serialNumbers);
+        }
+    });
 }
 
 })();
