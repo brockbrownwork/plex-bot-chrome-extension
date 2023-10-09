@@ -96,7 +96,7 @@ function blurWorkcenterEntry() {
     var intervalId = setInterval(function() {
         // Get the first element with the name "scannerWorkcenter"
         var workcenterEntry = document.getElementsByName('scannerWorkcenter')[0];
-        var inputJob = document.getElementsByName("scanner");
+        var inputJob = document.getElementsByName("scanner")[0];
         // Check if the element exists
         if (workcenterEntry) {
             workcenterEntry.disabled = true;
@@ -122,27 +122,29 @@ function clickSetup() {
 let clickedFirstOk = false;
 // Function to set the value of the serialNoScanner element
 
-let waitForSetupWidgetChange = (someFunction = () => {console.log("yeah!")}) => {
-    // Wait for the setup widget to change, then click the button
-    const setupWidgetObserver = new MutationObserver(mutations => {
-        for(let mutation of mutations) {
+let waitForSetupWidgetChange = (someFunction = () => { console.log("yeah!") }) => {
+    // Wait for an element to contain the text "This job is set up.", then execute the function
+    const jobSetupObserver = new MutationObserver(mutations => {
+        for (let mutation of mutations) {
             // Check if the mutation is of type 'characterData' and its target is a text node
             if (mutation.type === 'characterData' && mutation.target.nodeType === Node.TEXT_NODE) {
-                console.log('setupWidget text changed!');
-                if (document.getElementById('setupWidget').innerText.includes("240 - QC")) { // Needs testing!
-                    console.log("hey! don't double scan!");
-                } else {
+                // Check if there's an element that contains the text "This job is set up."
+                if (document.body.innerText.includes("This job is set up.")) {
+                    if (document.getElementById('setupWidget').innerText.includes("240 - QC")) { // Needs testing!
+                        alert("hey! don't double scan!");
+                        location.reload();
+                    } else {
                     someFunction();
+                    }
                 }
             }
         }
     });
 
-    // Start observing the element with the ID `setupWidget` for changes
-    const setupWidgetElement = document.getElementById('setupWidget');
-    setupWidgetObserver.observe(setupWidgetElement, {
+    // Start observing the entire document for changes
+    jobSetupObserver.observe(document.body, {
         characterData: true, // Watch for changes in text data
-        subtree: true,      // Make sure we're watching all inner nodes including text nodes
+        subtree: true,       // Watch all inner nodes including text nodes
     });
 }
 
@@ -224,7 +226,7 @@ if (currentURL.includes("plex.com/ControlPanel/Dashboard")) {
     let lastScanTime = localStorage.getItem("lastScanTime");
     let lastScanCode = localStorage.getItem("lastScanCode");
     // If it's been more less than 60 seconds since the last scan
-    if ( lastScanTime && ((Date().now () - lastScanTime) / 1000) < 60 && lastScanCode ) {
+    if ( lastScanTime && ((Date.now() - lastScanTime) / 1000) < 60 && lastScanCode ) {
         console.log("Last scan time:", lastScanTime);
         console.log("Last scan code:", lastScanCode);
         let secondsSinceLastScan = (Date.now() - lastScanTime) / 1000;
