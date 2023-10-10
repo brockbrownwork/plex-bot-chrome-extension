@@ -123,30 +123,11 @@ let clickedFirstOk = false;
 // Function to set the value of the serialNoScanner element
 
 let waitForSetupWidgetChange = (someFunction = () => { console.log("yeah!") }) => {
-    // Wait for an element to contain the text "This job is set up.", then execute the function
-    const jobSetupObserver = new MutationObserver(mutations => {
-        for (let mutation of mutations) {
-            // Check if the mutation is of type 'characterData' and its target is a text node
-            if (mutation.type === 'characterData' && mutation.target.nodeType === Node.TEXT_NODE) {
-                // Check if there's an element that contains the text "This job is set up."
-                if (document.body.innerText.includes("This job is set up.")) {
-                    if (document.getElementById('setupWidget').innerText.includes("240 - QC")) { // Needs testing!
-                        alert("hey! don't double scan!");
-                        location.reload();
-                    } else {
-                    someFunction();
-                    }
-                }
-            }
-        }
-    });
-
-    // Start observing the entire document for changes
-    jobSetupObserver.observe(document.body, {
-        characterData: true, // Watch for changes in text data
-        subtree: true,       // Watch all inner nodes including text nodes
-    });
+    // Wait for the XHR response that contains the information for the job
+    
+    someFunction();
 }
+
 
 
 function setScannerValue(some_string) {
